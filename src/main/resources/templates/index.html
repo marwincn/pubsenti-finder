@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js"
+            integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <title>微博舆情分析系统</title>
+</head>
+
+<body>
+    <nav class="navbar shadow sticky-top navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="#">微博舆论分析</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/index">主页</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://github.com/marwincn">源码</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container pt-3">
+        <div class="row">
+            <div class="col-3">
+                <div class="list-group shadow" id="list-tab" role="tablist">
+                    <a th:each="hot,iterStat: ${hotList}" th:href="'#hot' + ${iterStat.index}" th:class="(${iterStat.index}==0?'active ':'') + 'd-flex align-items-center list-group-item list-group-item-action'" data-toggle="list" role="tab" aria-controls="profile">
+                        <span class="badge" th:if="${hot.status >= 0.5}">👏</span>
+                        <span class="badge" th:if="${hot.status >= 0.05 && hot.status < 0.5}">😀</span>
+                        <span class="badge" th:if="${hot.status < 0.05 && hot.status > -0.05}">👤</span>
+                        <span class="badge" th:if="${hot.status <= -0.05 && hot.status > -0.5}">😡</span>
+                        <span class="badge" th:if="${hot.status <= -0.5}">👿</span>
+                        <span class="d-none d-md-block" th:text="${hot.desc}">Hot title</span>
+                    </a>
+                </div>
+            </div>
+            <div class="col-9 pl-0">
+                <div class="tab-content" id="nav-tabContent">
+                    <div th:each="hot,iterStat: ${hotList}" th:id="'hot' + ${iterStat.index}" th:class="'tab-pane fade' + (${iterStat.index}==0?' show active':'')" role="tabpanel" aria-labelledby="list-profile-list">
+                        <div th:each="weibo: ${hot.weiboList}">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card shadow">
+                                        <div class="card-body">
+                                            <h6 class="card-title">
+                                                <img th:src="${weibo.pic}" style="width: 2rem; height: 2rem; border-radius: 50%;">
+                                                [[${weibo.user}]]
+                                            </h6>
+                                            <p class="card-subtitle mb-2 text-muted" th:text="${weibo.time}">Card subtitle</p>
+                                            <p class="card-text" th:utext="${weibo.content}">Card content.</p>
+                                            <a th:href="${weibo.url}" class="card-link">Weibo link</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row justify-content-md-center pt-3 pb-3">
+                                <div class="col-12">
+                                    <div class="card shadow">
+                                        <canvas th:id="'chart' + ${weibo.id}" class="m-2"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <ul class="list-group shadow list-group-flush">
+                                        <li class="list-group-item" th:each="comment: ${weibo.comments}">
+                                            <span th:text="${comment.text}">Comment</span>
+                                            <div class="flex-row float-right">
+                                                <span class="badge badge-pill badge-light mr-2" th:text="'👍' + ${comment.like}"></span>
+                                                <span class="badge badge-pill badge-primary" data-toggle="modal" data-target="#modal" th:attr="data-text=${comment.text}" th:if="${comment.score > 0}">Positive</span>
+                                                <span class="badge badge-pill badge-secondary" data-toggle="modal" data-target="#modal" th:attr="data-text=${comment.text}" th:if="${comment.score == 0}">Neutral</span>
+                                                <span class="badge badge-pill badge-danger" data-toggle="modal" data-target="#modal" th:attr="data-text=${comment.text}" th:if="${comment.score < 0}">Negetive</span>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                    <a th:href="@{/detail(key=${weibo.key})}" class="card-link float-right p-3">查看更多评论...</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <strong class="modal-title">反馈</strong>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="feedback-form">
+                        <div class="form-group">
+                            <label id="comment-label" class="col-form-label"></label>
+                            <input id="comment-input" class="form-control" type="hidden" name="comment">
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" id="radio1" class="custom-control-input" name="sentiment" value="pos">
+                            <label class="custom-control-label" for="radio1">😃</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" id="radio2" class="custom-control-input" name="sentiment" value="neg">
+                            <label class="custom-control-label" for="radio2">😡</label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="submit">提交</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $('#modal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var text = button.data('text');
+            $('#comment-label').text(text)
+            $('#comment-input').val(text);
+        });
+        $('#submit').click(function () {
+            var comment = $('#comment-input').val();
+            var sentiment = $("input[name='sentiment']:checked").val();
+            var form = {'comment': comment, 'sentiment':sentiment};
+            $.ajax({
+                type: "post",
+                url: "/feedback",
+                data: form,
+                success: function () {
+                    $('#modal').modal('hide');
+                }
+            });
+        });
+    </script>
+    <script th:inline="javascript">
+        var hotList = [[${hotList}]];
+        for (let hot of hotList) {
+            for (let weibo of hot.weiboList) {
+                var ctx = document.getElementById('chart' + weibo.id);
+                var myChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Positive', 'Negetive', 'Neutral'],
+                        datasets: [{
+                            data: [weibo.posCount, weibo.negCount, weibo.otherCount],
+                            backgroundColor: [
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(200, 200, 200, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(200, 200, 200, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {}
+                });
+            }
+        }
+    </script>
+</body>
+
+</html>
