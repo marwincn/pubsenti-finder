@@ -1,6 +1,6 @@
 package cn.marwin.crawler;
 
-import cn.marwin.classifier.MyClassiyier;
+import cn.marwin.classifier.MyClassifier;
 import cn.marwin.entity.Weibo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -62,7 +62,7 @@ public class CrawlTask extends TimerTask {
                 int otherCount = 0;
                 for (Comment comment: commentList) {
                     // 使用分类器评估评论的得分
-                    double score = MyClassiyier.getScore(comment.getText());
+                    double score = MyClassifier.getScore(comment.getText());
                     comment.setScore(score);
                     insertComment(jedis, cm_key, comment);
 

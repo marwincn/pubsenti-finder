@@ -2,7 +2,7 @@ package cn.marwin.classifier;
 
 import java.io.*;
 
-public class MyClassiyier {
+public class MyClassifier {
 
     public static final String MODEL_PATH = "/Users/mdah/Playground/Senti-Corpus/weibo-model";
     public static Model model;

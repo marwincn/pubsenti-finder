@@ -35,19 +35,19 @@ class TrainTest {
             negComments.add(line);
         }
 
-        MyClassiyier.init();
+        MyClassifier.init();
         int count = 0;
         for (String comment: posComments) {
             System.out.println(comment);
             // 将结果转换为
-            double p = MyClassiyier.getScore(comment);
+            double p = MyClassifier.getScore(comment);
             System.out.println("情感分析结果为：" + p);
             if (p > 1) { count++; }
         }
 
         for (String comment: negComments) {
             System.out.println(comment);
-            double p = MyClassiyier.getScore(comment);
+            double p = MyClassifier.getScore(comment);
             System.out.println("情感分析结果为：" + p);
             if (p < 1) { count++; }
         }

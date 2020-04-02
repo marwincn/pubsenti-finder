@@ -1,6 +1,6 @@
 package cn.marwin;
 
-import cn.marwin.classifier.MyClassiyier;
+import cn.marwin.classifier.MyClassifier;
 import cn.marwin.crawler.CrawlTask;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,7 +16,7 @@ public class Application {
         SpringApplication.run(Application.class, args);
 
         // 初始化分类器
-        MyClassiyier.init();
+        MyClassifier.init();
 
         // 设置定时爬虫任务
         Timer timer = new Timer();
