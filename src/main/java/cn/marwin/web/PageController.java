@@ -19,7 +19,7 @@ import java.util.List;
 @Controller
 public class PageController {
 
-    @RequestMapping("/index")
+    @RequestMapping("/")
     public String index(Model model) {
         Jedis jedis = RedisUtil.getJedis();
         String timestamp = jedis.lindex("timestamp", 0);

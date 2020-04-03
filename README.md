@@ -2,8 +2,9 @@
  
 ## 项目介绍
 使用爬虫周期性地爬取微博热搜榜，获取热搜列表，每条热搜内的热门微博和每条微博的评论。使用文本分类算法对每条评论进行情感分析，将所有微博数据和情感分析的结果存储在Redis里。运行Web服务直观地展示微博数据和情感分析结果。
-![Web界面](https://i.loli.net/2020/04/02/8Ru3WO6KYhwixJB.png)
 
+Web界面：
+![Web界面](https://i.loli.net/2020/04/02/8Ru3WO6KYhwixJB.png)![手机界面](https://i.loli.net/2020/04/03/Q6xTGD3mSVCWIwu.jpg)
 ## 项目结构介绍
 
 ### util包
@@ -38,7 +39,7 @@ Web服务由`Spring Boot`支持，后端从Redis读取数据（其实数据可�
 ### 3.下载分词所需的数据
 本项目使用的分词工具为[HanLP](https://github.com/hankcs/HanLP/tree/1.x)，为了分词更准确它需要一些额外的数据。
 
-下载[data.zip](http://nlp.hankcs.com/download.php?file=data)，解压后将`data`目录复制到`src/main/resources`目录下即可，HanLP会自动在classpath下面找到数据。
+下载[data.zip](http://nlp.hankcs.com/download.php?file=data)，解压后将`data`目录复制到`src/main/resources`目录下即可（分词只用到data/dictionary目录，可以将data/model目录删除节省空间），HanLP会自动在classpath下面找到数据。
 
 ### 4.设置模型及语料的路径
 我提供了一些基本的语料作为参考，在`src/main/resources/train`目录下。复制模型`weibo-model`的绝对路径到`MyClassifier`类的`MODEL_PATH`（**注意一定要用绝对路径，后续路径也是，因为项目打包成jar后运行的classpath路径不确定，相对路径可能会失效**），运行时如果模型文件存在就不用重新训练模型。
@@ -47,7 +48,8 @@ Web服务由`Spring Boot`支持，后端从Redis读取数据（其实数据可�
 
 ## 运行
 * 下载了`pox.xml`中依赖的包后，在IDE中直接运行`Application`类中的main函数。
-* 使用`mvn clean package`命令将项目打包成jar，使用`java -jar *.jar`运行。
+* 或者使用`mvn clean package`命令将项目打包成jar，使用`java -jar *.jar`运行。
+* 看控制台的输出，爬完一次微博后在浏览器打开`http://localhost:8080`查看Web页面。
 
 ## 自定义参数
 由于微博翻爬虫系统对爬虫的限制非常严重，所以我设置的爬取速度非常慢，每次爬取的微博数量比较少，如果你解决了微博反爬问题，可以自定义这些参数提高爬取效率。

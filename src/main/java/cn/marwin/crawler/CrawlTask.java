@@ -9,6 +9,8 @@ import cn.marwin.entity.Hot;
 import redis.clients.jedis.Jedis;
 import cn.marwin.util.RedisUtil;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,10 +26,11 @@ public class CrawlTask extends TimerTask {
     public void run() {
         try {
             long start = System.currentTimeMillis();
-            System.out.println("### 开始爬取微博评论 ###");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            System.out.println("### 开始爬取微博 "  + formatter.format(LocalDateTime.now()) + " ###");
             crawl();
             long end = System.currentTimeMillis();
-            System.out.println("### 爬取微博结束，耗时：" + ((end - start) % 1000.0) + "s ###");
+            System.out.println("### 爬取微博结束，耗时：" + ((end - start) / 1000.0) + "s ###");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -82,7 +85,6 @@ public class CrawlTask extends TimerTask {
                 jedis.hsetnx(wb_key, "posCount", "" + posCount);
                 jedis.hsetnx(wb_key, "negCount", "" + negCount);
                 jedis.hsetnx(wb_key, "otherCount", "" + otherCount);
-                System.out.println("posCount: " + posCount + ", negCount: " + negCount + ", otherCount: " + otherCount);
 
                 //为了防止爬取过快导致403或触发反爬，每个微博爬完暂停3s
                 Thread.sleep(3000);
@@ -115,7 +117,6 @@ public class CrawlTask extends TimerTask {
         wb_value.put("content", weibo.getContent());
         jedis.hmset(key, wb_value);
         jedis.expire(key, KEY_EXPIRE_TIME);
-        System.out.println("Weibo Insert: " + weibo.getContent());
     }
 
     private void insertComment(Jedis jedis, String key, Comment comment) {
