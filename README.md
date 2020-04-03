@@ -4,7 +4,7 @@
 使用爬虫周期性地爬取微博热搜榜，获取热搜列表，每条热搜内的热门微博和每条微博的评论。使用文本分类算法对每条评论进行情感分析，将所有微博数据和情感分析的结果存储在Redis里。运行Web服务直观地展示微博数据和情感分析结果。
 
 Web界面：
-![Web界面](https://i.loli.net/2020/04/02/8Ru3WO6KYhwixJB.png)![手机界面](https://i.loli.net/2020/04/03/Q6xTGD3mSVCWIwu.jpg)
+![Web界面](https://i.loli.net/2020/04/02/8Ru3WO6KYhwixJB.png)
 ## 项目结构介绍
 
 ### util包
