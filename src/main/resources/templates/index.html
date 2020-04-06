@@ -85,7 +85,7 @@
                                                 <span class="badge badge-pill badge-light mr-2" th:text="'👍' + ${comment.like}"></span>
                                                 <span class="badge badge-pill badge-primary" data-toggle="modal" data-target="#modal" th:attr="data-text=${comment.text}" th:if="${comment.score > 0}">Positive</span>
                                                 <span class="badge badge-pill badge-secondary" data-toggle="modal" data-target="#modal" th:attr="data-text=${comment.text}" th:if="${comment.score == 0}">Neutral</span>
-                                                <span class="badge badge-pill badge-danger" data-toggle="modal" data-target="#modal" th:attr="data-text=${comment.text}" th:if="${comment.score < 0}">Negetive</span>
+                                                <span class="badge badge-pill badge-danger" data-toggle="modal" data-target="#modal" th:attr="data-text=${comment.text}" th:if="${comment.score < 0}">Negative</span>
                                             </div>
                                         </li>
                                     </ul>
@@ -160,7 +160,7 @@
                 var myChart = new Chart(ctx, {
                     type: 'doughnut',
                     data: {
-                        labels: ['Positive', 'Negetive', 'Neutral'],
+                        labels: ['Positive', 'Negative', 'Neutral'],
                         datasets: [{
                             data: [weibo.posCount, weibo.negCount, weibo.otherCount],
                             backgroundColor: [
