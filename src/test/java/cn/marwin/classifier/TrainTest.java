@@ -42,14 +42,14 @@ class TrainTest {
             // 将结果转换为
             double p = MyClassifier.getScore(comment);
             System.out.println("情感分析结果为：" + p);
-            if (p > 1) { count++; }
+            if (p > 0) { count++; }
         }
 
         for (String comment: negComments) {
             System.out.println(comment);
             double p = MyClassifier.getScore(comment);
             System.out.println("情感分析结果为：" + p);
-            if (p < 1) { count++; }
+            if (p < 0) { count++; }
         }
 
         double result = 1.0 * count / (posComments.size() + negComments.size());
@@ -59,15 +59,14 @@ class TrainTest {
     /**
      * 测试对否定词的分词情况
      */
-    @Test
     void segement() throws IOException {
         Train.loadAuxWords();
         System.out.println(HanLP.segment("我今天不高兴，我们不要做坏事"));
         System.out.println(Train.segment("我今天不高兴，我们不要做坏事"));
         System.out.println(HanLP.segment("我不酸，我不是不喜欢你"));
         System.out.println(Train.segment("我不酸，我不是不喜欢你"));
-        System.out.println(HanLP.segment("这是非人道的，非常低级，我没兴趣"));
-        System.out.println(Train.segment("这是非人道的，非常低级，我没兴趣"));
+        System.out.println(HanLP.segment("这是非人道的，非常低级且不要脸，我没兴趣"));
+        System.out.println(Train.segment("这是非人道的，非常低级且不要脸，我没兴趣"));
         System.out.println(HanLP.segment("天呐，我无法赞同这个观点，不能学习他，不然不会得到别人的认可，不要相信"));
         System.out.println(Train.segment("天呐，我无法赞同这个观点，不能学习他，不然不会得到别人的认可，不要相信"));
     }

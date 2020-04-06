@@ -184,7 +184,7 @@ public class WeiboParser {
         Matcher m = pattern.matcher(html);
         if (m.find()) {
             String create_at = m.group();
-            return create_at.substring(15, create_at.length() - 2);
+            return create_at.substring(15, create_at.length() - 13);
         }
         return "获取时间失败";
     }
