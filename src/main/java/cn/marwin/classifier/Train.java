@@ -1,22 +1,14 @@
 package cn.marwin.classifier;
 
-import com.hankcs.hanlp.HanLP;
-import com.hankcs.hanlp.seg.common.Term;
+import cn.marwin.util.FileUtil;
+import cn.marwin.util.SegmentUtil;
 
 import java.io.*;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
 
 public class Train {
-
-    // 停用词表
-    public static final String STOPWORDS_PATH = "/Users/mdah/Playground/Senti-Corpus/cn_stopwords.txt";
-    public static Set<String> stopWords = new HashSet<>();
-    // 否定词表
-    public static final String NONWORDS_PATH = "/Users/mdah/Playground/Senti-Corpus/cn_nonwords.txt";
-    public static Set<String> nonWords = new HashSet<>();
 
     // 文档列表
     public static final String POS_DOCS_PATH = "/Users/mdah/Playground/Senti-Corpus/weibo/pos.txt";
@@ -43,53 +35,21 @@ public class Train {
      * 加载语料库。
      */
     public static void loadCorpus() throws IOException {
-        Long start = System.currentTimeMillis();
+        long start = System.currentTimeMillis();
 
-        FileReader fileReader = new FileReader(POS_DOCS_PATH);
-        BufferedReader reader = new BufferedReader(fileReader);
-        String line;
-        while ((line = reader.readLine()) != null) {
-            posDocs.add(line);
-        }
-
-        fileReader = new FileReader(NEG_DOCS_PATH);
-        reader = new BufferedReader(fileReader);
-        while ((line = reader.readLine()) != null) {
-            negDocs.add(line);
-        }
+        posDocs.addAll(FileUtil.fileToList(POS_DOCS_PATH));
+        negDocs.addAll(FileUtil.fileToList(NEG_DOCS_PATH));
 
         System.out.println("语料库加载成功，耗时：" + (System.currentTimeMillis() - start) + "ms");
-    }
-
-    /**
-     * 加载辅助词表，包括停用词和否定词
-     */
-    public static void loadAuxWords() throws IOException {
-        Long start = System.currentTimeMillis();
-
-        FileReader fileReader = new FileReader(STOPWORDS_PATH);
-        BufferedReader reader = new BufferedReader(fileReader);
-        String line;
-        while ((line = reader.readLine()) != null) {
-            stopWords.add(line);
-        }
-
-        fileReader = new FileReader(NONWORDS_PATH);
-        reader = new BufferedReader(fileReader);
-        while ((line = reader.readLine()) != null) {
-            nonWords.add(line);
-        }
-
-        System.out.println("停用词库加载成功，耗时：" + (System.currentTimeMillis() - start) + "ms");
     }
 
     /**
      * 对每个文档进行分词，计算词在所有文档里出现的次数，忽略单个文档里的词频
      */
     public static void segmentDocs() {
-        Long start = System.currentTimeMillis();
+        long start = System.currentTimeMillis();
 
-        posDocs.stream().map(l -> segment(l)).forEach(words -> {
+        posDocs.stream().map(SegmentUtil::segment).forEach(words -> {
             for (String word: words) {
                 if (posWordsMap.containsKey(word)) {
                     // 忽略了同步问题
@@ -100,7 +60,7 @@ public class Train {
             }
         });
 
-        negDocs.stream().map(l -> segment(l)).forEach(words -> {
+        negDocs.stream().map(SegmentUtil::segment).forEach(words -> {
             for (String word: words) {
                 if (negWordsMap.containsKey(word)) {
                     // 忽略了同步问题
@@ -130,7 +90,7 @@ public class Train {
         words.addAll(posWords);
         words.addAll(negWords);
 
-        words.stream().forEach(word -> {
+        words.forEach(word -> {
             // 包含word的pos文档数
             int posTimes = posWordsMap.getOrDefault(word, 0);
             // 包含word的neg文档数
@@ -154,40 +114,6 @@ public class Train {
         });
 
         System.out.println("计算卡方值成功，耗时：" + (System.currentTimeMillis() - start) + "ms");
-    }
-
-    /**
-     * 重写的分词方法，去除停用词，转换否定词
-     */
-    public static Set<String> segment(String text) {
-        Set<String> splitWords = Stream.of(",", ".", "!", "?", "，", "。", "！", "？", " ").collect(Collectors.toSet());
-        HashSet<String> words = new HashSet<>(); // 使用set忽略了词频
-        int tag = 1; // 标记，遇到否定词标记取反
-
-        List<Term> termList = HanLP.segment(text);
-        for (Term t: termList) {
-            String word = t.word;
-            // 遇到否定词
-            if (nonWords.contains(word)) {
-                tag = -tag;
-                continue;
-            }
-            // 遇到分隔符，中断否定
-            if (tag == -1 && splitWords.contains(word)) {
-                tag = -tag;
-                continue;
-            }
-            // 剔除停用词
-            if (stopWords.contains(word)) {
-                continue;
-            }
-            // 转换否定词
-            if (tag == -1) {
-                word = "N" + word;
-            }
-            words.add(word);
-        }
-        return words;
     }
 
 }

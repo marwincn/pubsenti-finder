@@ -1,5 +1,7 @@
 package cn.marwin.classifier;
 
+import cn.marwin.util.SegmentUtil;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.*;
@@ -77,7 +79,7 @@ public class Model implements Serializable {
      * 提取输入文本的特征词
      */
     private Set<String> getFeatures(String text) {
-        Set<String> words = Train.segment(text);
+        Set<String> words = SegmentUtil.segment(text);
         HashSet<String> features = new HashSet<>();
         for (String word: words) {
             if (featureMap.containsKey(word)) {

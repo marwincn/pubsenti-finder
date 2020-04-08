@@ -20,7 +20,6 @@ public class MyClassifier {
         } else {
             System.out.println("开始训练模型。");
             Train.loadCorpus();
-            Train.loadAuxWords();
             Train.segmentDocs();
             Train.extractFeatures();
             model = Train.getModel();
