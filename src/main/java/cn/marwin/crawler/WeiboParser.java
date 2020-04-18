@@ -204,10 +204,17 @@ public class WeiboParser {
         return "获取正文失败";
     }
 
-    // todo: 去掉两个标签中间的@信息
     private static String processText(String text) {
-        Pattern pattern = Pattern.compile("<[^>]+>");
-        Matcher matcher = pattern.matcher(text);
-        return matcher.replaceAll("");
+        // 匹配微博表情包
+        Pattern emoji = Pattern.compile("<span class=\"url-icon\"><img alt=([^\\s]+).*?</span>");
+        // 匹配所有html标签
+        Pattern html = Pattern.compile("<[^>]+>");
+        Matcher m = emoji.matcher(text);
+        while (m.find()) {
+            text = m.replaceFirst(m.group(1));
+            m = emoji.matcher(text);
+        }
+        m = html.matcher(text);
+        return m.replaceAll("");
     }
 }
