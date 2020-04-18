@@ -14,7 +14,7 @@ public class FileUtil {
         BufferedReader reader = new BufferedReader(fileReader);
         String line;
         while ((line = reader.readLine()) != null) {
-            if (!line.trim().equals("")) {
+            if (!line.trim().isEmpty()) {
                 list.add(line);
             }
         }

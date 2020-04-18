@@ -14,7 +14,6 @@ class TrainTest {
     /**
      * 测试模型训练过程
      */
-    @Test
     void train() throws IOException {
         MyClassifier.init();
         MyClassifier.model.printFeatures();
@@ -62,6 +61,7 @@ class TrainTest {
     void testOne() throws IOException {
         MyClassifier.init();
         String text = "";
+        System.out.println(SegmentUtil.segment(text));
         System.out.println(MyClassifier.getScore(text));
     }
 
@@ -71,8 +71,8 @@ class TrainTest {
     void segement() throws IOException {
         System.out.println(HanLP.segment("我今天不高兴，我们不要做坏事"));
         System.out.println(SegmentUtil.segment("我今天不高兴，我们不要做坏事"));
-        System.out.println(HanLP.segment("我不酸，我不是不喜欢你"));
-        System.out.println(SegmentUtil.segment("我不酸，我不是不喜欢你"));
+        System.out.println(HanLP.segment("我不酸 我不是不喜欢你"));
+        System.out.println(SegmentUtil.segment("我不酸 我不是不喜欢你"));
         System.out.println(HanLP.segment("这是非人道的，非常低级且不要脸，我没兴趣"));
         System.out.println(SegmentUtil.segment("这是非人道的，非常低级且不要脸，我没兴趣"));
         System.out.println(HanLP.segment("天呐，我无法赞同这个观点，不能学习他，不然不会得到别人的认可，不要相信"));
