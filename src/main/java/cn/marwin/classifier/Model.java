@@ -67,11 +67,17 @@ public class Model implements Serializable {
      * 打印模型里所有特征
      */
     public void printFeatures() {
-        Set<String> keys = featureMap.keySet();
-        System.out.println("特征词  卡方值  pos文档次数  neg文档次数");
-        for (String key: keys) {
-            System.out.println(key + "  " + featureMap.get(key) + "  " + posWordsMap.getOrDefault(key, 0) +
-                    "  " + negWordsMap.getOrDefault(key, 0));
+        List<Map.Entry<String, BigDecimal>> features = new ArrayList<>(featureMap.entrySet());
+        features.sort(Comparator.comparing(Map.Entry<String, BigDecimal>::getValue));
+
+        System.out.println("特征词\t卡方值\tpos文档次数\tneg文档次数");
+        for (Map.Entry<String, BigDecimal> f: features) {
+            System.out.printf("%s\t%s\t%d\t%d\n",
+                    f.getKey(),
+                    f.getValue(),
+                    posWordsMap.getOrDefault(f.getKey(), 0),
+                    negWordsMap.getOrDefault(f.getKey(), 0)
+            );
         }
     }
 

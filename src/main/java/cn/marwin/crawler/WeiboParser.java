@@ -101,6 +101,7 @@ public class WeiboParser {
                 weiboList.add(weibo);
             }
         } catch (Exception e) {
+            System.err.println("解析微博列表失败：");
             e.printStackTrace();
         }
 
@@ -113,7 +114,7 @@ public class WeiboParser {
      * @param pageSize 获取的评论页数目，至少取一页，一页20条评论
      * @return 评论列表
      */
-    public static List<Comment> getCommentList(Weibo weibo, int pageSize) throws InterruptedException {
+    public static List<Comment> getCommentList(Weibo weibo, int pageSize) {
         List<Comment> commentList = new ArrayList<>();
         // 请求第一页评论，获取后续页面的参数
         String next = WeiboParser.parseComment(weibo, commentList, "0", "0");
@@ -149,6 +150,7 @@ public class WeiboParser {
             String json = HttpUtil.request(url);
             rootNode = mapper.readTree(json);
         } catch (Exception e) {
+            System.err.println("解析评论列表失败：");
             e.printStackTrace();
             return null;
         }

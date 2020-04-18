@@ -13,6 +13,7 @@ public class HttpUtil {
 
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(15, TimeUnit.SECONDS)
                 //.proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("", 8888)))
                 .build();
 

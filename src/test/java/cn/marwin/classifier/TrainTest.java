@@ -6,19 +6,23 @@ import com.hankcs.hanlp.HanLP;
 import com.hankcs.hanlp.dictionary.CustomDictionary;
 import org.junit.jupiter.api.Test;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 class TrainTest {
 
     /**
-     * 测试模型准确率
-     * @throws IOException
+     * 测试模型训练过程
      */
     @Test
+    void train() throws IOException {
+        MyClassifier.init();
+        MyClassifier.model.printFeatures();
+    }
+
+    /**
+     * 测试模型准确率
+     */
     void test() throws IOException {
         // 测试文档路径
         String posPath = "/Users/mdah/Playground/Senti-Corpus/test/pos.txt";
@@ -29,21 +33,36 @@ class TrainTest {
         MyClassifier.init();
         int count = 0;
         for (String comment: posComments) {
-            System.out.println(comment);
             double p = MyClassifier.getScore(comment);
-            System.out.println("情感分析结果为：" + p);
-            if (p > 0) { count++; }
+            if (p > 0) {
+                count++;
+            } else {
+                System.out.println(comment);
+                System.out.println("情感分析结果为：" + p);
+            }
         }
 
         for (String comment: negComments) {
-            System.out.println(comment);
             double p = MyClassifier.getScore(comment);
-            System.out.println("情感分析结果为：" + p);
-            if (p < 0) { count++; }
+            if (p < 0) {
+                count++;
+            } else {
+                System.out.println(comment);
+                System.out.println("情感分析结果为：" + p);
+            }
         }
 
         double result = 1.0 * count / (posComments.size() + negComments.size());
         System.out.println("模型在测试集上的准确率为：" + result);
+    }
+
+    /**
+     * 测试单个文本判断效果
+     */
+    void testOne() throws IOException {
+        MyClassifier.init();
+        String text = "";
+        System.out.println(MyClassifier.getScore(text));
     }
 
     /**
@@ -64,7 +83,7 @@ class TrainTest {
      * 测试对HanLP动态添加用户自定义词典
      */
     void customDictionary() {
-        String text = "营销号专买热搜，杠精键盘侠都来了。";
+        String text = "营销号专买热搜，杠精键盘侠都来了。就这样还开学，不够人数，不给检测";
         System.out.println(HanLP.segment(text));
 
         CustomDictionary.add("杠精");
@@ -72,5 +91,6 @@ class TrainTest {
         CustomDictionary.add("热搜");
         CustomDictionary.add("营销号");
         System.out.println(HanLP.segment(text));
+        System.out.println(SegmentUtil.segment(text));
     }
 }

@@ -49,13 +49,17 @@ public class SegmentUtil {
      * 重写的分词方法，去除停用词，转换否定词
      */
     public static Set<String> segment(String text) {
-        Set<String> splitWords = Stream.of(",", ".", "!", "?", "，", "。", "！", "？", " ").collect(Collectors.toSet());
+        Set<String> splitWords = Stream.of(",", ".", "!", "?", "，", "。", "！", "？", " ", "  ").collect(Collectors.toSet());
         HashSet<String> words = new HashSet<>(); // 使用set忽略了词频
         int tag = 1; // 标记，遇到否定词标记取反
 
         List<Term> termList = HanLP.segment(text);
         for (Term t: termList) {
             String word = t.word;
+
+            if (word.trim().equals("")) {
+                continue;
+            }
             // 遇到否定词
             if (nonWords.contains(word)) {
                 tag = -tag;
@@ -70,11 +74,12 @@ public class SegmentUtil {
             if (stopWords.contains(word)) {
                 continue;
             }
-            // 转换否定词
+            // 转换否定词，添加N前缀
             if (tag == -1) {
                 word = "N" + word;
             }
-            words.add(word);
+            // 添加词性后缀
+            words.add(word + t.nature);
         }
         return words;
     }

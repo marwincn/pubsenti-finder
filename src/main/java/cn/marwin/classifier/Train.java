@@ -92,9 +92,9 @@ public class Train {
 
         words.forEach(word -> {
             // 包含word的pos文档数
-            int posTimes = posWordsMap.getOrDefault(word, 0);
+            double posTimes = posWordsMap.getOrDefault(word, 0);
             // 包含word的neg文档数
-            int negTimes = negWordsMap.getOrDefault(word, 0);
+            double negTimes = negWordsMap.getOrDefault(word, 0);
 
             // 计算2x2表格的卡方值
             // todo: improve this arithmetic
@@ -105,7 +105,7 @@ public class Train {
 
             BigDecimal x = a.multiply(d).subtract(b.multiply(c)).pow(2).multiply(new BigDecimal(posDocsSize + negDocsSize));
             BigDecimal y = a.add(b).multiply(c.add(d)).multiply(a.add(c)).multiply(b.add(d));
-            BigDecimal chi = x.divide(y, 6);
+            BigDecimal chi = x.divide(y, 3, BigDecimal.ROUND_HALF_UP);
 
             // 选择95%置信度下的特征词
             if (chi.compareTo(new BigDecimal(3.84)) > 0) {
