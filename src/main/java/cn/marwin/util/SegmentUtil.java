@@ -47,7 +47,7 @@ public class SegmentUtil {
             System.err.println("自定义词表加载失败：" + CUSTOMWORDS_PATH);
         }
 
-        SPLITWORDS = Stream.of(",", ".", "!", "?", "，", "。", "！", "？").collect(Collectors.toSet());
+        SPLITWORDS = Stream.of(",", ".", "!", "?", "，", "。", "！", "？", "[").collect(Collectors.toSet());
     }
 
     /**
